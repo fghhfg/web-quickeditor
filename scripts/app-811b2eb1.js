@@ -40,13 +40,44 @@ angular.module("editor.rename").service(
 var module = angular.module("editor.login", ["editor.gapi","ngMaterial"]);
 module.controller("LoginCtrl",["$mdDialog","login","user",function(e,t,n){this.login=function(){t.login(n).then(function(){e.hide()})}}]),
 
-angular.module("editor.login").service("login",["$q","$mdDialog","googleApi","clientId","scope",function(e,t,n,i,o){var l=function(){var e=gapi.auth.getToken();return e&&Date.now()<e.expires_at},r=function(e,t){var n={client_id:i,scope:o,immediate:e};return t&&(n.login_hint=t,n.authuser=-1),n},a=function(t){return n.then(function(n){if(l())return n.auth.getToken();var i=e.defer();return n.auth.authorize(t,function(e){if(e&&!e.error)i.resolve(e);else{var t=e?e.error:"Unknown authentication error";i.reject(t)}}),i.promise})};this.login=function(e){var t=r(!1,e);return a(t)},this.checkAuth=function(e){var t=r(!0,e);return a(t)},this.showLoginDialog=function(e,n){return t.show({targetEvent:e,templateUrl:"components/login/login.html",controller:"LoginCtrl",clickOutsideToClose:!1,escapeToClose:!1,controllerAs:"ctrl",locals:{user:n}})}}]);var module=angular.module("editor.gapi",[]);module.factory("googleApi",["$rootScope","$window","$q","apiKey","loadApis",function(e,t,n,i,o){var l=n.defer();return t.init_gapi=function(){e.$apply(function(){var e=[];i&&t.gapi.client.setApiKey(i),angular.forEach(o,function(t,i){e.push(n.when(gapi.client.load(i,t)))}),n.all(e).then(function(){l.resolve(t.gapi)})})},l.promise}]);var MultiPartBuilder=function(){this.boundary=Math.random().toString(36).slice(2),this.mimeType='multipart/mixed; boundary="'+this.boundary+'"',this.parts=[],this.body=null};MultiPartBuilder.prototype.append=function(e,t){if(null!==this.body)throw new Error("Builder has already been finalized.");return this.parts.push("\r\n--",this.boundary,"\r\n","Content-Type: ",e,"\r\n\r\n",t),this},MultiPartBuilder.prototype.finish=function(){if(0===this.parts.length)throw new Error("No parts have been added.");return null===this.body&&(this.parts.push("\r\n--",this.boundary,"--"),this.body=this.parts.join("")),{type:this.mimeType,body:this.body}};
+angular.module("editor.login").service("login",["$q","$mdDialog","googleApi","clientId","scope",
+  function(e,t,n,i,o){
+    var l = function(){var e=gapi.auth.getToken();return e&&Date.now()<e.expires_at},
+      r = function(e,t){var n={client_id:i,scope:o,immediate:e}; return t&&(n.login_hint=t,n.authuser=-1),n},
+      a = function(t){
+        return n.then( function(n){if(l())return n.auth.getToken();var i=e.defer();return n.auth.authorize(t,function(e){if(e&&!e.error)i.resolve(e);else{var t=e?e.error:"Unknown authentication error";i.reject(t)}}),i.promise})}; 
+    this.login = function(e){var t=r(!1,e);return a(t)},this.checkAuth=function(e){var t=r(!0,e);return a(t)},this.showLoginDialog=function(e,n){return t.show({targetEvent:e,templateUrl:"components/login/login.html",controller:"LoginCtrl",clickOutsideToClose:!1,escapeToClose:!1,controllerAs:"ctrl",locals:{user:n}})}}]);
+
+
+var module = angular.module("editor.gapi",[]);
+module.factory("googleApi",["$rootScope","$window","$q","apiKey","loadApis",function(e,t,n,i,o){
+  var l=n.defer();
+  return t.init_gapi = function(){
+    e.$apply(
+      function(){ var e=[];i&&t.gapi.client.setApiKey(i),angular.forEach(o,function(t,i){e.push(n.when(gapi.client.load(i,t)))}),n.all(e).then(function(){l.resolve(t.gapi)})})},l.promise}]);
+
+var MultiPartBuilder = function(){this.boundary=Math.random().toString(36).slice(2),this.mimeType='multipart/mixed; boundary="'+this.boundary+'"',this.parts=[],this.body=null};
+
+MultiPartBuilder.prototype.append = function(e,t){if(null!==this.body)throw new Error("Builder has already been finalized.");return this.parts.push("\r\n--",this.boundary,"\r\n","Content-Type: ",e,"\r\n\r\n",t),this}, 
+
+MultiPartBuilder.prototype.finish = function(){if(0===this.parts.length)throw new Error("No parts have been added.");return null===this.body&&(this.parts.push("\r\n--",this.boundary,"--"),this.body=this.parts.join("")),{type:this.mimeType,body:this.body}};
 
 
 var module = angular.module("editor.drive",["editor.gapi"]);
 module.service("drive",["$q","$cacheFactory","googleApi","applicationId",function(e,t,n,i){var o="id,title,mimeType,userPermission,editable,copyable,shared,fileSize",l=t("files"),r=function(e,t){var n={metadata:e,content:t};return l.put(e.id,n),n};this.loadFile=function(t){var i=l.get(t);return i?e.when(i):n.then(function(n){var i=n.client.drive.files.get({fileId:t,fields:o}),l=n.client.drive.files.get({fileId:t,alt:"media"});return e.all([e.when(i),e.when(l)])}).then(function(e){return r(e[0].result,e[1].body)})},this.saveFile=function(t,i){return n.then(function(n){var l,r;t.id?(l="/upload/drive/v2/files/"+encodeURIComponent(t.id),r="PUT"):(l="/upload/drive/v2/files",r="POST");var a=(new MultiPartBuilder).append("application/json",JSON.stringify(t)).append(t.mimeType,i).finish(),d=n.client.request({path:l,method:r,params:{uploadType:"multipart",fields:o},headers:{"Content-Type":a.type},body:a.body});return e.when(d)}).then(function(e){return r(e.result,i)})},this.showPicker=function(){return n.then(function(t){var n=e.defer(),o=new google.picker.View(google.picker.ViewId.DOCS);o.setMimeTypes("text/plain");var l=(new google.picker.PickerBuilder).setAppId(i).setOAuthToken(t.auth.getToken().access_token).addView(o).setCallback(function(e){if("picked"==e.action){var t=e.docs[0].id;n.resolve(t)}else"cancel"==e.action&&n.reject()}).build();return l.setVisible(!0),n.promise})},this.showSharing=function(e){return n.then(function(t){var n=new t.drive.share.ShareClient(i);n.setItemIds([e]),n.showSettingsDialog()})}}]),
 
-angular.module("editor",["editor.login","editor.rename","editor.drive","ngRoute","ngMaterial","ui.codemirror"]).constant("apiKey",null).constant("clientId","709207149709-fadikftqudacphtr4pq5mu80s6tqklrb.apps.googleusercontent.com").constant("applicationId","709207149709").constant("scope",["email","profile","https://www.googleapis.com/auth/drive","https://www.googleapis.com/auth/drive.install"]).constant("loadApis",{drive:"v2"}).config(["$routeProvider",function(e){e.when("/edit/:fileId?",{templateUrl:"app/main/main.html",controller:"MainCtrl",controllerAs:"ctrl"}).otherwise({redirectTo:function(){return console.log("Otherwise..."),"/edit/"}})}]);
+angular.module("editor",["editor.login","editor.rename","editor.drive","ngRoute","ngMaterial","ui.codemirror"])
+  .constant("apiKey",null)
+  .constant("clientId","709207149709-fadikftqudacphtr4pq5mu80s6tqklrb.apps.googleusercontent.com")
+  .constant("applicationId","709207149709")
+  .constant("scope",
+    ["email","profile","https://www.googleapis.com/auth/drive","https://www.googleapis.com/auth/drive.install"])
+  .constant("loadApis",{drive:"v2"})
+  .config([
+    "$routeProvider", 
+    function(e){
+      e.when("/edit/:fileId?",{templateUrl:"app/main/main.html",controller:"MainCtrl",controllerAs:"ctrl"})
+        .otherwise({redirectTo:function(){return console.log("Otherwise..."),"/edit/"}})}]);
 
 
 var module = angular.module("editor");
