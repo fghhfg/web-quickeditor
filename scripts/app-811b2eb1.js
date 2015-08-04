@@ -126,4 +126,56 @@ module.controller(
         .then(p, function(){return r.showLoginDialog(null,n.user).then(p)})
         .finally(function(){e.loading=!1})}]),
 
-angular.module("editor").run(["$templateCache",function(e){e.put("app/main/main.html",'<md-toolbar ng-hide="loading" layout="row"><div class="md-toolbar-tools"><span flex="" ng-click="ctrl.renameFile($event)"><span>{{file.metadata.title}}<md-tooltip>Click to rename</md-tooltip></span></span><md-button ng-click="ctrl.shareFile($event)" class="toolbar-action" aria-label="Share file"><md-icon alt="share" md-font-icon="mdi mdi-account-multiple"></md-icon><md-tooltip>Share file</md-tooltip></md-button><md-button ng-click="ctrl.saveFile($event)" class="toolbar-action" aria-label="Save file to Google Drive"><md-icon alt="save" md-font-icon="mdi mdi-content-save"></md-icon><md-tooltip>Save file to Google Drive&#0153;</md-tooltip></md-button><md-button ng-click="ctrl.openFile($event)" class="toolbar-action" hide-sm="" aria-label="Open file from Google Drive"><md-icon alt="open" md-font-icon="mdi mdi-google-drive"></md-icon><md-tooltip>Open file from Google Drive&#0153;</md-tooltip></md-button></div></md-toolbar><div ng-show="loading" layout-align="center center" flex="" layout="column"><md-progress-circular md-mode="indeterminate"></md-progress-circular></div><md-content ng-hide="loading" layout-margin="" flex="" class="editor-frame md-whiteframe-z1"><ui-codemirror flex="" ng-model="file.content" ui-refresh="loading"></ui-codemirror></md-content>'),e.put("components/login/login.html",'<md-dialog><md-content><p>Please sign-in with your Google account to continue.</p></md-content><div class="md-actions" layout="row" layout-align="center center"><md-button class="md-primary" ng-click="ctrl.login()">Sign-in</md-button></div></md-dialog>'),e.put("components/rename/rename.html",'<md-dialog><md-content layout-padding="" layout="row" layout-sm="column"><md-input-container><label>Title</label> <input ng-model="form.title"></md-input-container></md-content><div class="md-actions" layout="row" layout-align="center center"><md-button ng-click="ctrl.cancel()">Cancel</md-button><md-button ng-click="ctrl.save()">Save</md-button></div></md-dialog>')}]);
+angular.module("editor").run(["$templateCache",function(e){e.put("app/main/main.html",'
+
+  <md-toolbar ng-hide="loading" layout="row">
+     <div class="md-toolbar-tools">
+        <span flex="" ng-click="ctrl.renameFile($event)">
+           <span>
+              {{file.metadata.title}}
+              <md-tooltip>Click to rename</md-tooltip>
+           </span>
+        </span>
+        <md-button ng-click="ctrl.shareFile($event)" class="toolbar-action" aria-label="Share file">
+           <md-icon alt="share" md-font-icon="mdi mdi-account-multiple"></md-icon>
+           <md-tooltip>Share file</md-tooltip>
+        </md-button>
+        <md-button ng-click="ctrl.saveFile($event)" class="toolbar-action" aria-label="Save file to Google Drive">
+           <md-icon alt="save" md-font-icon="mdi mdi-content-save"></md-icon>
+           <md-tooltip>Save file to Google Drive&#0153;</md-tooltip>
+        </md-button>
+        <md-button ng-click="ctrl.openFile($event)" class="toolbar-action" hide-sm="" aria-label="Open file from Google Drive">
+           <md-icon alt="open" md-font-icon="mdi mdi-google-drive"></md-icon>
+           <md-tooltip>Open file from Google Drive&#0153;</md-tooltip>
+        </md-button>
+     </div>
+  </md-toolbar>
+  <div ng-show="loading" layout-align="center center" flex="" layout="column">
+     <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+  </div>
+  <md-content ng-hide="loading" layout-margin="" flex="" class="editor-frame md-whiteframe-z1">
+     <ui-codemirror flex="" ng-model="file.content" ui-refresh="loading"></ui-codemirror>
+  </md-content>
+
+'),e.put("components/login/login.html",'
+
+  <md-dialog>
+     <md-content>
+        <p>Please sign-in with your Google account to continue.</p>
+     </md-content>
+     <div class="md-actions" layout="row" layout-align="center center">
+        <md-button class="md-primary" ng-click="ctrl.login()">Sign-in</md-button>
+     </div>
+  </md-dialog>
+  '),e.put("components/rename/rename.html",'
+  <md-dialog>
+     <md-content layout-padding="" layout="row" layout-sm="column">
+        <md-input-container><label>Title</label> <input ng-model="form.title"></md-input-container>
+     </md-content>
+     <div class="md-actions" layout="row" layout-align="center center">
+        <md-button ng-click="ctrl.cancel()">Cancel</md-button>
+        <md-button ng-click="ctrl.save()">Save</md-button>
+     </div>
+  </md-dialog>
+
+')}]);
