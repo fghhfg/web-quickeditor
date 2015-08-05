@@ -130,6 +130,7 @@ module.controller(
         .then(p, function(){return r.showLoginDialog(null,n.user).then(p)})
         .finally(function(){e.loading=!1})}]),
 
+/*  from where? */
 angular.module("editor").run(["$templateCache",function(e){e.put("app/main/main.html",'
 
   <md-toolbar ng-hide="loading" layout="row">
