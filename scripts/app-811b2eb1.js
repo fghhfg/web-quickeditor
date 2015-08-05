@@ -167,7 +167,9 @@ angular.module("editor").run(["$templateCache",function(e){e.put("app/main/main.
         <md-button class="md-primary" ng-click="ctrl.login()">Sign-in</md-button>
      </div>
   </md-dialog>
-  '),e.put("components/rename/rename.html",'
+  
+'),e.put("components/rename/rename.html",'
+  
   <md-dialog>
      <md-content layout-padding="" layout="row" layout-sm="column">
         <md-input-container><label>Title</label> <input ng-model="form.title"></md-input-container>
